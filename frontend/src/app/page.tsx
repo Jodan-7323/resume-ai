@@ -2,6 +2,8 @@
 
 import { useState, useCallback, DragEvent } from "react";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || \"http://localhost:8000\";
+
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
@@ -38,7 +40,7 @@ export default function Home() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const uploadRes = await fetch("http://localhost:8000/api/upload", {
+      const uploadRes = await fetch(`${API_BASE}/api/upload`, {
         method: "POST",
         body: formData,
       });
@@ -46,7 +48,7 @@ export default function Home() {
       setResumeText(text);
 
       // Step 2: Analyze with AI
-      const analyzeRes = await fetch("http://localhost:8000/api/analyze", {
+      const analyzeRes = await fetch(`${API_BASE}/api/analyze`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ resume_text: text }),
@@ -209,7 +211,7 @@ export default function Home() {
               </button>
               <button 
                 onClick={async () => {
-                  const resp = await fetch("http://localhost:8000/api/download", {
+                  const resp = await fetch(`${API_BASE}/api/download`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ text: result.optimized, format: "docx" }),
