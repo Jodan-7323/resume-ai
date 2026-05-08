@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, DragEvent } from "react";
+import { useState, useCallback, DragEvent, useEffect } from "react";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
 
@@ -15,6 +15,15 @@ export default function Home() {
     optimized: string;
   } | null>(null);
   const [resumeText, setResumeText] = useState("");
+  const [visitCount, setVisitCount] = useState(0);
+
+  // 页面加载时访问统计
+  useEffect(() => {
+    fetch(`${API_BASE}/api/visits`)
+      .then((r) => r.json())
+      .then((d) => setVisitCount(d.visits))
+      .catch(() => {});
+  }, []);
 
   const handleDrop = useCallback((e: DragEvent) => {
     e.preventDefault();
@@ -253,6 +262,9 @@ export default function Home() {
       {/* Footer */}
       <footer className="text-center py-8 text-slate-400 text-sm border-t border-slate-100">
         AI简历优化 · 让你的简历更出色
+        {visitCount > 0 && (
+          <span className="ml-3">👁 {visitCount} 次访问</span>
+        )}
       </footer>
     </div>
   );
